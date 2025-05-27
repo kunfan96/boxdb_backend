@@ -1,1 +1,17 @@
+#服务运行信息
+service:
+  port: 8804
+#日志配置信息
+log:
+  errorOutput: ./error.log
+  infoOutput: ./info.log
 #存储配置信息
+mysql:
+  host: 192.168.238.160
+  port: 3306
+  username: root
+  password: 123456
+redis:
+  host: 192.168.238.160
+  port: 6309
+minio:
