@@ -13,19 +13,21 @@ func main() {
 	defer func() {
 		err := recover()
 		if err != nil {
+			fmt.Println(err.(string), 9999)
 			utils.Logger.Error(err.(string))
-			utils.Logger.Info("898989")
 		}
 	}()
 
 	port := utils.GetBootstrapConfig().Service.Port
 	if utils.IsPortUsed(port) {
-		panic(fmt.Sprintf("the port %s has been used", port))
+		str := fmt.Sprintf("the port %s has been used", port)
+		fmt.Println(str)
+		panic(str)
 	}
 
 	BASE_ROUTER := gin.Default()
-	API_V1 := BASE_ROUTER.Group("/boxdb/api/v1")
-	router.RegisterRouter(API_V1)
+	API_V1_GROUP := BASE_ROUTER.Group("/boxdb/api/v1")
+	router.RegisterRouterGroupV1(API_V1_GROUP)
 
 	BASE_ROUTER.Run(fmt.Sprintf(":%s", port))
 }

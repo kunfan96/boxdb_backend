@@ -1,6 +1,6 @@
 #服务运行信息
 service:
-  port: 8804
+  port: 25000
 #日志配置信息
 log:
   errorOutput: ./error.log

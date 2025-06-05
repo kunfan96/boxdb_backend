@@ -45,13 +45,13 @@ func init() {
 	logOutputConfig := GetBootstrapConfig().Log
 
 	// 创建日志编码器
-	encoder := zapcore.NewJSONEncoder(zapcore.EncoderConfig{
+	encoder := zapcore.NewConsoleEncoder(zapcore.EncoderConfig{
 		TimeKey:       "timestamp",
 		LevelKey:      "level",
 		MessageKey:    "message",
 		StacktraceKey: "trace",
 		EncodeTime: func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-			encodeTimeLayout(t, "2006-01-02 15:04:05.000", enc)
+			encodeTimeLayout(t, "\n2006-01-02 15:04:05.000", enc)
 		},
 		EncodeLevel: zapcore.CapitalLevelEncoder,
 	})
