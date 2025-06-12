@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
 	defer func() {
 		err := recover()
 		if err != nil {
@@ -18,6 +17,8 @@ func main() {
 		}
 	}()
 
+	// check whether the port is used
+	// if port is used, quit
 	port := utils.GetBootstrapConfig().Service.Port
 	if utils.IsPortUsed(port) {
 		str := fmt.Sprintf("the port %s has been used", port)
