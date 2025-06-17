@@ -44,14 +44,15 @@ func infoLevelEnabler(level zapcore.Level) bool {
 func init() {
 	logOutputConfig := GetBootstrapConfig().Log
 
-	// 创建日志编码器
+	// create log instance
 	encoder := zapcore.NewConsoleEncoder(zapcore.EncoderConfig{
 		TimeKey:       "timestamp",
 		LevelKey:      "level",
 		MessageKey:    "message",
 		StacktraceKey: "trace",
 		EncodeTime: func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-			encodeTimeLayout(t, "\n2006-01-02 15:04:05.000", enc)
+			// add log info prefix
+			encodeTimeLayout(t, "---\n2006-01-02 15:04:05.000", enc)
 		},
 		EncodeLevel: zapcore.CapitalLevelEncoder,
 	})

@@ -26,6 +26,8 @@ func main() {
 		panic(str)
 	}
 
+	utils.InitRedis()
+
 	BASE_ROUTER := gin.Default()
 	API_V1_GROUP := BASE_ROUTER.Group("/boxdb/api/v1")
 	router.RegisterRouterGroupV1(API_V1_GROUP)

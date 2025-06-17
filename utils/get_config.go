@@ -22,8 +22,9 @@ type BootstrapYamlConfig struct {
 		Password string `yaml:"password"`
 	} `yaml:"mysql"`
 	Redis struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		Password string `yaml:"password"`
 	} `yaml:"redis"`
 }
 
