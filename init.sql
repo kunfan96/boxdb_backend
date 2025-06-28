@@ -11,7 +11,7 @@
  Target Server Version : 80300 (8.3.0)
  File Encoding         : 65001
 
- Date: 19/06/2025 20:53:10
+ Date: 28/06/2025 14:50:08
 */
 
 SET NAMES utf8mb4;
@@ -63,15 +63,16 @@ COMMIT;
 DROP TABLE IF EXISTS `boxdb_users`;
 CREATE TABLE `boxdb_users` (
   `id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '主键 uuid',
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名，唯一',
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码，sha存储',
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '手机号，唯一',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '手机号，唯一',
   `role` int NOT NULL COMMENT '0：超级管理员（可以创建管理员和用户，创建租户）1：管理员（可以创建用户，创建租户）2：普通用户（不可以注册，只有<超级>管理员添加才可以登录）',
   `status` int NOT NULL COMMENT '0:禁用1:启用2:未启用',
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `phone` (`phone`)
+  UNIQUE KEY `phone` (`phone`),
+  UNIQUE KEY `name` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------

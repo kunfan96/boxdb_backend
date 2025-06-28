@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"net"
 	"time"
@@ -27,8 +29,17 @@ func IsPortUsed(port string) bool {
 }
 
 // plugin generate uuid string
-func GetUUID() string {
+func GenerateUUID() string {
 	return uuid.New().String()
+}
+
+func GenerateToken(length int) (string, error) {
+	bytes := make([]byte, length)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
 }
 
 // plugin generate safe string
@@ -36,6 +47,11 @@ func GenerateEncryptString(str string) string {
 	b, _ := bcrypt.GenerateFromPassword([]byte(str), bcrypt.DefaultCost)
 
 	return string(b)
+}
+
+// 校验密码
+func CheckPassword(passwordInSql, password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(passwordInSql), []byte(password)) == nil
 }
 
 // plugin generate captcha

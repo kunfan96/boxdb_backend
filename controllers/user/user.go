@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"boxdb/config"
+	"boxdb/models"
 	"boxdb/utils"
 
 	"github.com/gin-gonic/gin"
@@ -20,11 +21,75 @@ func (u *UserController) LoginWithVerificationCode(c *gin.Context) {
 	})
 }
 
-// 账号+密码+图形验证码登录
+// username+password+captcha login
 func (u *UserController) LoginWithUsernamePassword(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"code": http.StatusOK,
-	})
+	reqBody := LoginWithUsernamePasswordReqBody{}
+	c.ShouldBindBodyWithJSON(&reqBody)
+
+	// check captcha whether null
+	if reqBody.Captcha.Code == "" || reqBody.Captcha.Id == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": http.StatusUnauthorized,
+			"msg":  "请输入验证码",
+			"data": nil,
+		})
+
+		return
+	}
+
+	captcha, err := utils.GetRedisStringByKey(fmt.Sprintf("%s:%s", config.CAPTCHA_PREFIX, reqBody.Captcha.Id))
+
+	if captcha != reqBody.Captcha.Code || err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": http.StatusUnauthorized,
+			"msg":  "验证码错误",
+			"data": nil,
+		})
+		return
+	}
+
+	user := models.USER{}
+	query := utils.DB.Where("name = ?", reqBody.Username).Find(&user)
+
+	// get a record in database
+	if query.Error == nil {
+		// check two password
+		if utils.CheckPassword(user.Password, reqBody.Password) {
+			token, _ := utils.GenerateToken(18)
+			c.Header("Token", token)
+
+			// delete old user login token if exist
+			oldToken, _ := utils.GetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID))
+			if oldToken != "" {
+				utils.DelRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_TOKEN_PREFIX, oldToken))
+				utils.DelRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID))
+			}
+
+			// set token in redis
+			utils.SetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_TOKEN_PREFIX, token), user.ID, time.Hour*72)
+			utils.SetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID), token, time.Hour*72)
+
+			// password and username correct
+			c.JSON(http.StatusOK, gin.H{
+				"code": http.StatusOK,
+				"data": nil,
+			})
+		} else {
+			// password error
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code": http.StatusUnauthorized,
+				"msg":  "密码错误",
+				"data": nil,
+			})
+		}
+	} else {
+		// username error
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": http.StatusUnauthorized,
+			"msg":  "暂无该用户",
+			"data": nil,
+		})
+	}
 }
 
 // 管理员添加用户
@@ -41,7 +106,7 @@ func (u *UserController) AdminUpdateUserInfo(c *gin.Context) {
 	})
 }
 
-// 生成二维码
+// 生成验证码
 func (u *UserController) GenerateCaptcha(c *gin.Context) {
 	id, image, answer := utils.GenerateCaptcha()
 
