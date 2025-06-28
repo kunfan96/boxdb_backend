@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"time"
@@ -26,16 +27,21 @@ func (u *UserController) LoginWithUsernamePassword(c *gin.Context) {
 	reqBody := LoginWithUsernamePasswordReqBody{}
 	c.ShouldBindBodyWithJSON(&reqBody)
 
-	// check captcha whether null
-	if reqBody.Captcha.Code == "" || reqBody.Captcha.Id == "" {
+	if reqBody.Captcha.Code == "" || reqBody.Captcha.Id == "" || reqBody.Username == "" || reqBody.Password == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"code": http.StatusUnauthorized,
-			"msg":  "请输入验证码",
+			"msg":  "请输入完整信息",
 			"data": nil,
 		})
 
 		return
 	}
+
+	// base64 encode
+	pwd, _ := base64.StdEncoding.DecodeString(reqBody.Password)
+	fullPwd := string(pwd)
+	// frontend use string like {6 chars}Boxdb_654321{4 chars}
+	reqBody.Password = fullPwd[6 : len(fullPwd)-4]
 
 	captcha, err := utils.GetRedisStringByKey(fmt.Sprintf("%s:%s", config.CAPTCHA_PREFIX, reqBody.Captcha.Id))
 
