@@ -1,54 +1,46 @@
--- MySQL dump 10.13  Distrib 9.3.0, for macos14.7 (arm64)
---
--- Host: 192.168.238.130    Database: boxdb
--- ------------------------------------------------------
--- Server version	8.3.0
+/*
+ Navicat Premium Dump SQL
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+ Source Server         : 虚拟机Mysql
+ Source Server Type    : MySQL
+ Source Server Version : 80300 (8.3.0)
+ Source Host           : 192.168.238.130:3306
+ Source Schema         : boxdb
 
---
--- Table structure for table `boxdb_tenancy`
---
+ Target Server Type    : MySQL
+ Target Server Version : 80300 (8.3.0)
+ File Encoding         : 65001
 
+ Date: 19/06/2025 20:53:10
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for boxdb_tenancy
+-- ----------------------------
 DROP TABLE IF EXISTS `boxdb_tenancy`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `boxdb_tenancy` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `status` int DEFAULT NULL,
-  `create_user_id` varchar(255) DEFAULT NULL,
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '主键',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '租户名字',
+  `status` int DEFAULT NULL COMMENT '状态\n0:正常1:禁用',
+  `create_user_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建用户id',
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `boxdb_tenancy`
---
+-- ----------------------------
+-- Records of boxdb_tenancy
+-- ----------------------------
+BEGIN;
+COMMIT;
 
-LOCK TABLES `boxdb_tenancy` WRITE;
-/*!40000 ALTER TABLE `boxdb_tenancy` DISABLE KEYS */;
-/*!40000 ALTER TABLE `boxdb_tenancy` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `boxdb_tenancy_user`
---
-
+-- ----------------------------
+-- Table structure for boxdb_tenancy_user
+-- ----------------------------
 DROP TABLE IF EXISTS `boxdb_tenancy_user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `boxdb_tenancy_user` (
   `id` varchar(255) NOT NULL,
   `user_id` varchar(255) DEFAULT NULL,
@@ -58,47 +50,35 @@ CREATE TABLE `boxdb_tenancy_user` (
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `boxdb_tenancy_user`
---
+-- ----------------------------
+-- Records of boxdb_tenancy_user
+-- ----------------------------
+BEGIN;
+COMMIT;
 
-LOCK TABLES `boxdb_tenancy_user` WRITE;
-/*!40000 ALTER TABLE `boxdb_tenancy_user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `boxdb_tenancy_user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `boxdb_users`
---
-
+-- ----------------------------
+-- Table structure for boxdb_users
+-- ----------------------------
 DROP TABLE IF EXISTS `boxdb_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `boxdb_users` (
-  `id` varchar(50) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `role` int NOT NULL,
-  `status` int NOT NULL,
+  `id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '主键 uuid',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码，sha存储',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '手机号，唯一',
+  `role` int NOT NULL COMMENT '0：超级管理员（可以创建管理员和用户，创建租户）1：管理员（可以创建用户，创建租户）2：普通用户（不可以注册，只有<超级>管理员添加才可以登录）',
+  `status` int NOT NULL COMMENT '0:禁用1:启用2:未启用',
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `phone` (`phone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `boxdb_users`
---
+-- ----------------------------
+-- Records of boxdb_users
+-- ----------------------------
+BEGIN;
+INSERT INTO `boxdb_users` (`id`, `name`, `password`, `phone`, `role`, `status`, `create_time`, `update_time`) VALUES ('87c809dc-52dd-449e-bead-4acdb1b25d81', 'Admin', '$2a$10$rkYq8OZELcJNjz0GzFucEegZ2ZL5KRFTAWI0F80ksPLfxo8XGKM5q', '15876870780', 0, 1, '2025-06-17 08:06:13', '2025-06-17 08:20:49');
+COMMIT;
 
-LOCK TABLES `boxdb_users` WRITE;
-/*!40000 ALTER TABLE `boxdb_users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `boxdb_users` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping routines for database 'boxdb'
---
+SET FOREIGN_KEY_CHECKS = 1;

@@ -1,7 +1,12 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
+	"time"
+
+	"boxdb/config"
+	"boxdb/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +43,16 @@ func (u *UserController) AdminUpdateUserInfo(c *gin.Context) {
 
 // 生成二维码
 func (u *UserController) GenerateCaptcha(c *gin.Context) {
+	id, image, answer := utils.GenerateCaptcha()
+
+	// set captcha cache in redis for 120s
+	utils.SetRedisStringByKey(fmt.Sprintf("%s:%s", config.CAPTCHA_PREFIX, id), answer, time.Second*120)
+
 	c.JSON(200, gin.H{
 		"code": http.StatusOK,
+		"data": gin.H{
+			"id":    id,
+			"image": image,
+		},
 	})
 }

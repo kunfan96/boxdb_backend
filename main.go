@@ -26,11 +26,14 @@ func main() {
 		panic(str)
 	}
 
-	utils.InitRedis()
+	{
+		utils.InitRedis()
+		utils.InitMysql()
+	}
 
-	BASE_ROUTER := gin.Default()
-	API_V1_GROUP := BASE_ROUTER.Group("/boxdb/api/v1")
-	router.RegisterRouterGroupV1(API_V1_GROUP)
+	baseRouter := gin.Default()
+	groupV1 := baseRouter.Group("/boxdb/api/v1")
+	router.RegisterRouterGroupV1(groupV1)
 
-	BASE_ROUTER.Run(fmt.Sprintf(":%s", port))
+	baseRouter.Run(fmt.Sprintf(":%s", port))
 }

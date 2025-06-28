@@ -16,6 +16,6 @@ func initUserController(group *gin.RouterGroup) {
 		userGroup.POST("/login/username", userController.LoginWithUsernamePassword)
 		userGroup.POST("/info/add", userController.AdminAddUser)
 		userGroup.POST("/info/update", userController.AdminUpdateUserInfo)
-		userGroup.POST("/info/captcha/generate", userController.GenerateCaptcha)
+		userGroup.POST("/captcha/generate", userController.GenerateCaptcha)
 	}
 }

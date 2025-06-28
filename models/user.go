@@ -13,3 +13,7 @@ type USER struct {
 	CreateTime time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP" json:"create_time"`
 	UpdateTime time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" json:"update_time"`
 }
+
+func (USER) TableName() string {
+	return "boxdb_users"
+}

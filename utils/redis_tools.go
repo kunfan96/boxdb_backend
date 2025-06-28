@@ -31,8 +31,8 @@ func InitRedis() {
 }
 
 // set redis hash
-func SetRedisStringByKey(key, value string) {
-	rdb.Set(ctx, key, value, 48*time.Hour) // 设置整个 String 2 天过期
+func SetRedisStringByKey(key, value string, time time.Duration) {
+	rdb.Set(ctx, key, value, time) // 设置整个 String 2 天过期
 }
 
 // get redis hash value

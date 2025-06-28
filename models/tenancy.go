@@ -24,3 +24,11 @@ type TenancyUser struct {
 	CreateTime time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP" json:"create_time"`
 	UpdateTime time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" json:"update_time"`
 }
+
+func (Tenancy) TableName() string {
+	return "boxdb_tenancy"
+}
+
+func (TenancyUser) TableName() string {
+	return "boxdb_tenancy_user"
+}
