@@ -1,8 +1,10 @@
 package main
 
 import (
+	"boxdb/config"
 	"boxdb/router"
 	"boxdb/utils"
+	"boxdb/utils/middleware"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +14,6 @@ func main() {
 	defer func() {
 		err := recover()
 		if err != nil {
-			fmt.Println(err.(string), 9999)
 			utils.Logger.Error(err.(string))
 		}
 	}()
@@ -32,7 +33,9 @@ func main() {
 	}
 
 	baseRouter := gin.Default()
-	groupV1 := baseRouter.Group("/boxdb/api/v1")
+	groupV1 := baseRouter.Group(config.API_V1_PREFIX)
+
+	groupV1.Use(middleware.CheckAuthToken())
 	router.RegisterRouterGroupV1(groupV1)
 
 	baseRouter.Run(fmt.Sprintf(":%s", port))

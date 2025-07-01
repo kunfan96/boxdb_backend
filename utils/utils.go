@@ -29,7 +29,7 @@ func IsPortUsed(port string) bool {
 }
 
 // plugin generate uuid string
-func GenerateUUID() string {
+func GeUUID() string {
 	return uuid.New().String()
 }
 

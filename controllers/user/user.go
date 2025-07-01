@@ -69,7 +69,7 @@ func (u *UserController) LoginWithUsernamePassword(c *gin.Context) {
 			if utils.CheckPassword(user.Password, reqBody.Password) {
 				// check two password
 				token, _ := utils.GenerateToken(18)
-				c.Header("Token", token)
+				c.Header(config.BOXDB_TOKEN_KEY, token)
 
 				// delete old user login token if exist
 				oldToken, _ := utils.GetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID))
