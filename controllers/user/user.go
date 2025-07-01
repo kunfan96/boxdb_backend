@@ -59,8 +59,14 @@ func (u *UserController) LoginWithUsernamePassword(c *gin.Context) {
 
 	// get a record in database
 	if query.Error == nil {
-		// check two password
-		if utils.CheckPassword(user.Password, reqBody.Password) {
+		if user.ID == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code": http.StatusUnauthorized,
+				"msg":  "账号密码错误",
+				"data": nil,
+			})
+		} else if utils.CheckPassword(user.Password, reqBody.Password) {
+			// check two password
 			token, _ := utils.GenerateToken(18)
 			c.Header("Token", token)
 
@@ -80,19 +86,12 @@ func (u *UserController) LoginWithUsernamePassword(c *gin.Context) {
 				"code": http.StatusOK,
 				"data": nil,
 			})
-		} else {
-			// password error
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"code": http.StatusUnauthorized,
-				"msg":  "密码错误",
-				"data": nil,
-			})
 		}
 	} else {
 		// username error
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"code": http.StatusUnauthorized,
-			"msg":  "暂无该用户",
+			"msg":  "系统错误",
 			"data": nil,
 		})
 	}
