@@ -65,27 +65,35 @@ func (u *UserController) LoginWithUsernamePassword(c *gin.Context) {
 				"msg":  "账号密码错误",
 				"data": nil,
 			})
-		} else if utils.CheckPassword(user.Password, reqBody.Password) {
-			// check two password
-			token, _ := utils.GenerateToken(18)
-			c.Header("Token", token)
+		} else {
+			if utils.CheckPassword(user.Password, reqBody.Password) {
+				// check two password
+				token, _ := utils.GenerateToken(18)
+				c.Header("Token", token)
 
-			// delete old user login token if exist
-			oldToken, _ := utils.GetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID))
-			if oldToken != "" {
-				utils.DelRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_TOKEN_PREFIX, oldToken))
-				utils.DelRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID))
+				// delete old user login token if exist
+				oldToken, _ := utils.GetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID))
+				if oldToken != "" {
+					utils.DelRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_TOKEN_PREFIX, oldToken))
+					utils.DelRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID))
+				}
+
+				// set token in redis
+				utils.SetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_TOKEN_PREFIX, token), user.ID, time.Hour*72)
+				utils.SetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID), token, time.Hour*72)
+
+				// password and username correct
+				c.JSON(http.StatusOK, gin.H{
+					"code": http.StatusOK,
+					"data": nil,
+				})
+			} else {
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"code": http.StatusUnauthorized,
+					"msg":  "账号密码错误",
+					"data": nil,
+				})
 			}
-
-			// set token in redis
-			utils.SetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_TOKEN_PREFIX, token), user.ID, time.Hour*72)
-			utils.SetRedisStringByKey(fmt.Sprintf("%s:%s", config.LOGIN_USER_UID_PREFIX, user.ID), token, time.Hour*72)
-
-			// password and username correct
-			c.JSON(http.StatusOK, gin.H{
-				"code": http.StatusOK,
-				"data": nil,
-			})
 		}
 	} else {
 		// username error
